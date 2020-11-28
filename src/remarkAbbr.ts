@@ -5,7 +5,7 @@ var squeezeParagraphs = require('mdast-squeeze-paragraphs')
 
 
 export interface AbbrProps {
-    value: string,
+    text: string,
     title: string
 }
 
@@ -14,13 +14,11 @@ export const RemarkAbbr = () => {
     return transformer
 
     function transformer(tree: any, file: any) {
-        // console.log("tree before:", tree);
         const keepNodes: AbbrProps[] = [];
         const regex = new RegExp(/[*]\[([^\]]*)\]:\s*(.+)\n*/)
         // get abbr data values
         visit(tree, "paragraph",
             (node: any) => {
-                // console.log("paragraph node: ", node);
                 if (node.type === "paragraph") {
                     let lastChild = node.children[node.children.length - 1];
 
@@ -29,22 +27,27 @@ export const RemarkAbbr = () => {
                         // console.log("Keeping: ", nodeCheck);
                         if (nodeCheck !== null) {
                             keepNodes.push({
-                                value: nodeCheck[1],
+                                text: nodeCheck[1],
                                 title: nodeCheck[2]
                             });
+                            node.children[node.children.length - 1].value = "";
                         }
                         //clear out the abbr input data
-                        node.children[node.children.length - 1].value = "";
                     }
                 }
             })
-
+        // clear out empty nodes
+        squeezeParagraphs(tree);
 
         // get abbr text values to replace
         visit(tree, "text", (node: any, index: number, parent: any) => {
-
+            console.log("Nodes: ", node);
+            keepNodes.forEach(abbr => {
+                if (abbr.text === node.value) {
+                    node.value = `<abbr title=${abbr.title}>${abbr.text}</abbr>`
+                }
+            })
         })
-        console.log("tree after: ", JSON.stringify(tree, null, 2));
-        squeezeParagraphs(tree);
+        // console.log("tree after: ", JSON.stringify(tree, null, 2));
     }
 }
