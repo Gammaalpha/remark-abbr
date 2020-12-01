@@ -7,9 +7,10 @@ let doc = fs.readFileSync(__dirname + "/testing.md", "utf8");
 const Plugin = () => {
     const result = remark()
         .use(RemarkAbbr)
+        .use(() => (tree: any) => {
+            console.log("AFTER TREE: ", JSON.stringify(tree, null, 2));
+        })
         .processSync(doc);
-
-    // console.log("contents: ", result.contents);
 
     return result.contents;
 }

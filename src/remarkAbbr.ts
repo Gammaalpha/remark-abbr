@@ -1,5 +1,6 @@
 let visit = require('unist-util-visit');
 var squeezeParagraphs = require('mdast-squeeze-paragraphs')
+const u = require('unist-builder');
 
 export interface AbbrProps {
     text: string,
@@ -10,7 +11,7 @@ export const RemarkAbbr = () => {
 
     return transformer
 
-    function transformer(tree: any) {
+    function transformer(tree: any, file: any) {
 
         const keepNodes: AbbrProps[] = [];
         const regex = new RegExp(/[*]\[([^\]]*)\]:\s*(.+)\n*/)
@@ -36,33 +37,46 @@ export const RemarkAbbr = () => {
                     }
                 }
             })
-        // clear out empty nodes
-        squeezeParagraphs(tree);
 
-        // get abbr text values to replace
-        visit(tree, "text", (node: any, index: number, parent: any) => {
-            const position = node.position;
+        if (keepNodes.length > 0) {
+            // clear out empty nodes
+            squeezeParagraphs(tree);
 
-            keepNodes.forEach(abbr => {
-                if (abbr.text === node.value) {
-                    const newChild = {
-                        type: 'element',
-                        children: [
-                            { type: "text", value: abbr.text },
-                        ],
-                        data: {
-                            hName: 'abbr',
-                            hProperties: {
-                                title: abbr.title
-                            }
-                        },
-                        position
-                    }
-
-                    parent.children[index] = newChild;
-
+            // get abbr text values to replace
+            visit(tree, "paragraph", (node: any, index: number, parent: any) => {
+                const { children = [] } = node;
+                if (node.type !== 'paragraph') {
+                    return node;
                 }
+                const [{ value, type }, ...siblings] = children;
+                debugger;
+                keepNodes.forEach(abbr => {
+                    children.forEach((child: any, index: number) => {
+                        if (type !== 'text') {
+                            return node;
+                        }
+                        const position = child.position;
+                        if (abbr.text === value) {
+                            const newChild = {
+                                type: 'element',
+                                children: [
+                                    { type: "text", value: abbr.text },
+                                ],
+                                data: {
+                                    hName: 'abbr',
+                                    hProperties: {
+                                        title: abbr.title
+                                    }
+                                },
+                                position
+                            }
+                        }
+                    })
+
+                })
+
             })
-        })
+        }
     }
+
 }

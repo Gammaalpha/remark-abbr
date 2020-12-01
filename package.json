@@ -1,13 +1,16 @@
 {
   "name": "remark-abbr",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "app.js",
   "license": "MIT",
-  "type": "module",
   "scripts": {
+    "tsc": "tsc",
+    "start": "tsc && node build/app.js",
+    "watch": "tsc --watch",
+    "dev": "npx ts-node src/app.ts --watch",
+    "nodemon": "nodemon src/app.ts",
     "test": "jest",
-    "test:watch": "jest --watchAll",
-    "tsc": "tsc"
+    "test:watch": "jest --watchAll"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.12.7",
@@ -17,11 +20,13 @@
     "jest": "^26.6.3",
     "remark": "^13.0.0",
     "ts-jest": "^26.4.4",
+    "ts-node": "^9.0.0",
     "typescript": "^4.1.2",
-    "unist-util-remove": "^2.0.1",
-    "unist-util-visit": "^2.0.3"
+    "nodemon": "^2.0.6"
   },
   "dependencies": {
-    "mdast-squeeze-paragraphs": "^4.0.0"
+    "unist-util-visit": "^2.0.3",
+    "mdast-squeeze-paragraphs": "^4.0.0",
+    "unist-builder": "^2.0.3"
   }
 }
