@@ -10,7 +10,7 @@ export const RemarkAbbr = () => {
 
     return transformer
 
-    function transformer(tree: any, file: any) {
+    function transformer(tree: any) {
 
         const keepNodes: AbbrProps[] = [];
         const regex = new RegExp(/[*]\[([^\]]*)\]:\s*(.+)\n*/)
