@@ -11,7 +11,7 @@ export const RemarkAbbr = () => {
 
     return transformer
 
-    function transformer(tree: any, file: any) {
+    function transformer(tree: any) {
 
         const keepNodes: AbbrProps[] = [];
         const regex = new RegExp(/[*]\[([^\]]*)\]:\s*(.+)\n*/)
@@ -51,7 +51,7 @@ export const RemarkAbbr = () => {
                 if (node.type !== 'paragraph') {
                     return node;
                 }
-                const [{ value, type }, ...siblings] = children;
+                const [{ value, type }] = children;
                 if (type !== 'text') {
                     return node;
                 }
