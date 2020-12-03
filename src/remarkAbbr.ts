@@ -21,19 +21,17 @@ export const RemarkAbbr = () => {
                 if (node.type !== 'paragraph') {
                     return node;
                 }
-                if (node.type === "paragraph") {
-                    let lastChild = node.children[node.children.length - 1];
+                let lastChild = node.children[node.children.length - 1];
 
-                    if (lastChild && lastChild.type === "text") {
-                        const nodeCheck = regex.exec(lastChild.value);
-                        if (nodeCheck !== null) {
-                            keepNodes.push({
-                                text: nodeCheck[1],
-                                title: nodeCheck[2]
-                            });
-                            //clear out the abbr input data
-                            node.children[node.children.length - 1].value = "";
-                        }
+                if (lastChild && lastChild.type === "text") {
+                    const nodeCheck = regex.exec(lastChild.value);
+                    if (nodeCheck !== null) {
+                        keepNodes.push({
+                            text: nodeCheck[1],
+                            title: nodeCheck[2]
+                        });
+                        //clear out the abbr input data
+                        node.children[node.children.length - 1].value = "";
                     }
                 }
             })
@@ -42,7 +40,7 @@ export const RemarkAbbr = () => {
             // clear out empty nodes
             squeezeParagraphs(tree);
             const pattern = keepNodes.map(item => item.text).join("|");
-            const inlineRegex = new RegExp(`\\b(${pattern})\\b`, "gi")
+            const inlineRegex = new RegExp(`\\b(${pattern})\\b`, "i")
 
             // get abbr text values to replace
             visit(tree, "paragraph", (node: any, index: number, parent: any) => {
@@ -51,21 +49,20 @@ export const RemarkAbbr = () => {
                 if (node.type !== 'paragraph') {
                     return node;
                 }
-                const [{ value, type }] = children;
-                if (type !== 'text') {
-                    return node;
-                }
-                if (inlineRegex.test(value)) {
-                    newChildren = value.trim().split(inlineRegex)
-                        .filter((x: string) => x !== '')
-                        .map(((y: string) => {
-                            let matchedAbbr = keepNodes.filter(abbrItem => abbrItem.text.toLowerCase() === y.toLowerCase());
-                            return matchedAbbr.length > 0 ? abbrNodeGenerator(updateAbbr(matchedAbbr[0], y)) : textNodeGenerator(y)
-                        }))
-                }
-                if (newChildren.length > 0) {
-                    let newNode = u("paragraph", newChildren);
-                    parent.children[index] = newNode
+                const [{ value, type }, ...siblings] = children;
+                if (type === "text") {
+                    const check = inlineRegex.test(value);
+                    if (check) {
+                        newChildren = value.split(inlineRegex)
+                            .filter((x: string) => x !== '')
+                            .map(((y: string) => {
+                                let matchedAbbr = keepNodes.filter(abbrItem => abbrItem.text.toLowerCase() === y.toLowerCase());
+                                return matchedAbbr.length > 0 ? abbrNodeGenerator(updateAbbr(matchedAbbr[0], y)) : textNodeGenerator(y)
+                            }))
+                    }
+                    if (newChildren.length > 0) {
+                        parent.children[index] = u("paragraph", [...newChildren, ...siblings]);
+                    }
                 }
             })
         }
@@ -83,7 +80,7 @@ const updateAbbr = (abbrData: AbbrProps, newText: string): AbbrProps => {
 
 const abbrNodeGenerator = (abbrData: AbbrProps) => {
     return {
-        type: 'element',
+        type: 'content',
         children: [
             { type: "text", value: abbrData.text },
         ],
