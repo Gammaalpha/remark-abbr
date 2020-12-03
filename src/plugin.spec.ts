@@ -5,6 +5,6 @@ test('should not have the abbr declaration node', () => {
 })
 
 test('should have the abbr translated node', () => {
-    expect(Plugin()).toMatch(/(hyperlinktext)/i);
+    expect(Plugin()).toMatch(/(title="hyperlinktext")/i);
 })
 

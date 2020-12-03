@@ -41,42 +41,59 @@ export const RemarkAbbr = () => {
         if (keepNodes.length > 0) {
             // clear out empty nodes
             squeezeParagraphs(tree);
+            const pattern = keepNodes.map(item => item.text).join("|");
+            const inlineRegex = new RegExp(`\\b(${pattern})\\b`, "gi")
 
             // get abbr text values to replace
             visit(tree, "paragraph", (node: any, index: number, parent: any) => {
                 const { children = [] } = node;
+                let newChildren: any[] = [];
                 if (node.type !== 'paragraph') {
                     return node;
                 }
                 const [{ value, type }, ...siblings] = children;
-                debugger;
-                keepNodes.forEach(abbr => {
-                    children.forEach((child: any, index: number) => {
-                        if (type !== 'text') {
-                            return node;
-                        }
-                        const position = child.position;
-                        if (abbr.text === value) {
-                            const newChild = {
-                                type: 'element',
-                                children: [
-                                    { type: "text", value: abbr.text },
-                                ],
-                                data: {
-                                    hName: 'abbr',
-                                    hProperties: {
-                                        title: abbr.title
-                                    }
-                                },
-                                position
-                            }
-                        }
-                    })
-
+                children.forEach((child: any, child_index: number) => {
+                    if (type !== 'text') {
+                        return node;
+                    }
+                    const position = child.position;
+                    // const check = inlineRegex.test(value);
+                    if (inlineRegex.test(value)) {
+                        newChildren = value.trim().split(inlineRegex)
+                            .filter((x: string) => x !== '')
+                            // TODO need fixing
+                            .map(((y: string) => {
+                                const matchedAbbr = keepNodes.filter(abbrItem => abbrItem.text.toLowerCase() === y.toLowerCase());
+                                return matchedAbbr.length > 0 ? abbrNodeGenerator(matchedAbbr[0]) : textNodeGenerator(y)
+                            }))
+                    }
                 })
-
+                if (newChildren.length > 0) {
+                    let newNode = u("paragraph", newChildren);
+                    parent.children[index] = newNode
+                }
             })
         }
     }
 
+
+}
+
+const abbrNodeGenerator = (abbrData: AbbrProps, position?: any) => {
+    return {
+        type: 'element',
+        children: [
+            { type: "text", value: abbrData.text },
+        ],
+        data: {
+            hName: 'abbr',
+            hProperties: {
+                title: abbrData.title
+            }
+        }
+    }
+}
+
+const textNodeGenerator = (value: string) => {
+    return u('text', value);
 }
