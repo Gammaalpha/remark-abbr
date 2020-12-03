@@ -7,6 +7,11 @@ export interface AbbrProps {
     title: string
 }
 
+interface ChildItemProps {
+    position: number,
+    children: any
+}
+
 export const RemarkAbbr = () => {
 
     return transformer
@@ -44,31 +49,42 @@ export const RemarkAbbr = () => {
 
             // get abbr text values to replace
             visit(tree, "paragraph", (node: any, index: number, parent: any) => {
-                const { children = [] } = node;
-                let newChildren: any[] = [];
-                if (node.type !== 'paragraph') {
-                    return node;
-                }
-                const [{ value, type }, ...siblings] = children;
-                if (type === "text") {
-                    const check = inlineRegex.test(value);
-                    if (check) {
-                        newChildren = value.split(inlineRegex)
-                            .filter((x: string) => x !== '')
-                            .map(((y: string) => {
-                                let matchedAbbr = keepNodes.filter(abbrItem => abbrItem.text.toLowerCase() === y.toLowerCase());
-                                return matchedAbbr.length > 0 ? abbrNodeGenerator(updateAbbr(matchedAbbr[0], y)) : textNodeGenerator(y)
-                            }))
+                let { children = [] } = node;
+                if (node.type === 'paragraph') {
+                    let childItemsToSplice: ChildItemProps[] = [];
+                    children.forEach((element: any, childIndex: number) => {
+                        if (element.type === "text") {
+                            const check = inlineRegex.test(element.value);
+                            if (check) {
+                                let newChildren: any[] = [];
+                                newChildren = element.value.split(inlineRegex)
+                                    .filter((x: string) => x !== '')
+                                    .map(((y: string) => {
+                                        let matchedAbbr = keepNodes.filter(abbrItem => abbrItem.text.toLowerCase() === y.toLowerCase());
+                                        return matchedAbbr.length > 0 ? abbrNodeGenerator(updateAbbr(matchedAbbr[0], y)) : textNodeGenerator(y)
+                                    }))
+                                childItemsToSplice.push({ position: childIndex, children: newChildren })
+                            }
+                        }
+                    });
+                    if (childItemsToSplice.length > 0) {
+                        const newArray = spliceArray(children, childItemsToSplice);
+                        parent.children[index] = u("paragraph", newArray)
                     }
-                    if (newChildren.length > 0) {
-                        parent.children[index] = u("paragraph", [...newChildren, ...siblings]);
-                    }
                 }
-            })
+            });
         }
+
     }
+}
 
 
+const spliceArray = (mainArray: any[], data: any[]) => {
+    let tempMainArray = [...mainArray]
+    data.reverse().forEach((element: ChildItemProps) => {
+        tempMainArray.splice(element.position, 1, ...element.children)
+    })
+    return tempMainArray;
 }
 
 const updateAbbr = (abbrData: AbbrProps, newText: string): AbbrProps => {
