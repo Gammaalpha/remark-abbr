@@ -52,22 +52,17 @@ export const RemarkAbbr = () => {
                     return node;
                 }
                 const [{ value, type }, ...siblings] = children;
-                children.forEach((child: any, child_index: number) => {
-                    if (type !== 'text') {
-                        return node;
-                    }
-                    const position = child.position;
-                    // const check = inlineRegex.test(value);
-                    if (inlineRegex.test(value)) {
-                        newChildren = value.trim().split(inlineRegex)
-                            .filter((x: string) => x !== '')
-                            // TODO need fixing
-                            .map(((y: string) => {
-                                const matchedAbbr = keepNodes.filter(abbrItem => abbrItem.text.toLowerCase() === y.toLowerCase());
-                                return matchedAbbr.length > 0 ? abbrNodeGenerator(matchedAbbr[0]) : textNodeGenerator(y)
-                            }))
-                    }
-                })
+                if (type !== 'text') {
+                    return node;
+                }
+                if (inlineRegex.test(value)) {
+                    newChildren = value.trim().split(inlineRegex)
+                        .filter((x: string) => x !== '')
+                        .map(((y: string) => {
+                            let matchedAbbr = keepNodes.filter(abbrItem => abbrItem.text.toLowerCase() === y.toLowerCase());
+                            return matchedAbbr.length > 0 ? abbrNodeGenerator(updateAbbr(matchedAbbr[0], y)) : textNodeGenerator(y)
+                        }))
+                }
                 if (newChildren.length > 0) {
                     let newNode = u("paragraph", newChildren);
                     parent.children[index] = newNode
@@ -79,7 +74,14 @@ export const RemarkAbbr = () => {
 
 }
 
-const abbrNodeGenerator = (abbrData: AbbrProps, position?: any) => {
+const updateAbbr = (abbrData: AbbrProps, newText: string): AbbrProps => {
+    return {
+        ...abbrData,
+        text: newText
+    }
+}
+
+const abbrNodeGenerator = (abbrData: AbbrProps) => {
     return {
         type: 'element',
         children: [
