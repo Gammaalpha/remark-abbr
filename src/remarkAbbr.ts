@@ -68,8 +68,7 @@ export const RemarkAbbr = () => {
                         }
                     });
                     if (childItemsToSplice.length > 0) {
-                        const newArray = spliceArray(children, childItemsToSplice);
-                        parent.children[index] = u("paragraph", newArray)
+                        parent.children[index] = u("paragraph", spliceArray(children, childItemsToSplice))
                     }
                 }
             });
