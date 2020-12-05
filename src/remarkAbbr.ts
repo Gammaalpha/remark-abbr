@@ -17,33 +17,47 @@ export const RemarkAbbr = () => {
     return transformer
 
     function transformer(tree: any) {
-
         const keepNodes: AbbrProps[] = [];
         const regex = new RegExp(/[*]\[([^\]]*)\]:\s*(.+)\n*/)
+        let emptyNode = false;
         // get abbr data values
         visit(tree, "paragraph",
             (node: any) => {
                 if (node.type !== 'paragraph') {
                     return node;
                 }
-                let lastChild = node.children[node.children.length - 1];
+                let lastItem = node.children[node.children.length - 1];
 
-                if (lastChild && lastChild.type === "text") {
-                    const nodeCheck = regex.exec(lastChild.value);
-                    if (nodeCheck !== null) {
-                        keepNodes.push({
-                            text: nodeCheck[1],
-                            title: nodeCheck[2]
-                        });
-                        //clear out the abbr input data
-                        node.children[node.children.length - 1].value = "";
-                    }
+                if (lastItem && lastItem.type === "text" && regex.test(lastItem.value)) {
+                    let splitLines = [];
+                    splitLines = lastItem.value.split("\n");
+
+                    const finalString = splitLines.map((element: string) => {
+                        // const valTest = regex.test(element);
+                        const nodeCheck = regex.exec(element);
+                        if (nodeCheck !== null) {
+                            keepNodes.push({
+                                text: nodeCheck[1],
+                                title: nodeCheck[2]
+                            });
+                            //clear out the abbr input data
+                            return "";
+                        }
+                        else {
+                            return element;
+                        }
+                    }).filter((i: string) => i !== "").join("\n");
+                    emptyNode = finalString.trim() !== "" ? false : true;
+                    // console.log(parent[index])
+                    node.children[node.children.length - 1] = textNodeGenerator(finalString);
                 }
-            })
+            });
+        if (emptyNode) {
+            squeezeParagraphs(tree);
+        }
 
         if (keepNodes.length > 0) {
             // clear out empty nodes
-            squeezeParagraphs(tree);
             const pattern = keepNodes.map(item => item.text).join("|");
             const inlineRegex = new RegExp(`\\b(${pattern})\\b`, "i")
 
