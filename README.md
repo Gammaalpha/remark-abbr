@@ -4,6 +4,8 @@
 
 It creates a new MDAST node type : "abbr".
 
+A demo for it can be seen [here](https://gammaalpha.github.io/rec-markdown/)
+
 ## Install
 
 npm:
