@@ -1,0 +1,15 @@
+{
+    "extends": "./tsconfig.base.json",
+    "compilerOptions": {
+        "noEmit": false
+    },
+    "exclude": [
+        "./node_modules",
+        "./build",
+        "./**/*.spec.ts",
+        "./src/app.ts",
+        "./src/plugin.ts",
+        "./jest.config.js",
+        "./babel.config.js"
+    ]
+}
