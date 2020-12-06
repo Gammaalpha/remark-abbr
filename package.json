@@ -1,0 +1,27 @@
+{
+  "name": "remark-abbr",
+  "version": "1.0.0",
+  "description": "Remark plugin for abbreviation support.",
+  "main": "index.js",
+  "peerDependencies": {
+    "mdast-squeeze-paragraphs": "^4.0.0",
+    "unist-builder": "^2.0.3",
+    "unist-util-visit": "^2.0.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Gammaalpha/remark-abbr.git"
+  },
+  "keywords": [
+    "remark",
+    "unifiedjs",
+    "Markdown",
+    "abbreviations"
+  ],
+  "author": "gammaalpha",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Gammaalpha/remark-abbr/issues"
+  },
+  "homepage": "https://github.com/Gammaalpha/remark-abbr#readme"
+}
