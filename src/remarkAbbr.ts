@@ -13,7 +13,6 @@ interface ChildItemProps {
 }
 
 export const RemarkAbbr = () => {
-
     return transformer
 
     function transformer(tree: any) {
@@ -52,7 +51,7 @@ export const RemarkAbbr = () => {
                     node.children[node.children.length - 1] = textNodeGenerator(finalString);
                 }
             });
-        if (emptyNode) {
+        if (emptyNode && keepNodes.length > 0) {
             squeezeParagraphs(tree);
         }
 
@@ -87,6 +86,7 @@ export const RemarkAbbr = () => {
                 }
             });
         }
+        // return tree;
 
     }
 }
