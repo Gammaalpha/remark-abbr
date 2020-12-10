@@ -30,9 +30,9 @@ This plugin is built for the current remark-parser and uses MDAST implemented by
 [remark](https://github.com/remarkjs/remark)
 ```
 
-And the script example.js has the following code:
+<!--And the script example.js has the following code:
 
-<!-- ```javascript
+ ```javascript
 const remark = require("remark");
 remark()
   .use(require("remark-abbr"))
