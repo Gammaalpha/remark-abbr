@@ -23,11 +23,12 @@ yarn:
 ## Use
 
 If we have the following file, example.md
-
+```
 \*[MDAST]:Markdown Abstract Syntax Trees
 
 This plugin is built for the current remark-parser and uses MDAST implemented by
 [remark](https://github.com/remarkjs/remark)
+```
 
 And the script example.js has the following code:
 
