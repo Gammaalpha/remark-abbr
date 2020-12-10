@@ -12,7 +12,7 @@
     "test": "jest",
     "test:watch": "jest --watchAll",
     "build-wp": "rm -rf build/ && webpack --mode production",
-    "publish": "npm run build-wp && sh deploy.sh"
+    "deploy": "npm run build-wp && sh deploy.sh"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.12.7",
