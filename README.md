@@ -23,6 +23,7 @@ yarn:
 ## Use
 
 If we have the following file, example.md
+
 ```
 *[MDAST]:Markdown Abstract Syntax Trees
 
@@ -30,21 +31,34 @@ This plugin is built for the current remark-parser and uses MDAST implemented by
 [remark](https://github.com/remarkjs/remark)
 ```
 
-<!--And the script example.js has the following code:
+And the script example.js has the following code:
 
- ```javascript
-const remark = require("remark");
-remark()
-  .use(require("remark-abbr"))
-  .process(src, (err, file) => console.log(String(file)));
-``` -->
+```javascript
+const fs = require("fs");
+const unified = require("unified");
+const remarkParse = require("remark-parse");
+const remark2rehype = require("remark-rehype");
+const rehypeStringify = require("rehype-stringify");
+
+unified()
+  .use(remarkParse)
+  .use(RemarkAbbr)
+  .use(remark2rehype)
+  .use(rehypeStringify)
+  .process(
+    fs.readFileSync(`${process.cwd()}/src/example.md`),
+    (err: any, file: any) => console.log(String(file))
+  );
+```
 
 This would output into the following HTML:
 
 ```html
-<p>This plugin is built for the current remark-parser and uses <abbr title="Markdown
-Abstract Syntax Trees">MDAST</abbr> implemented by
-<a href="https://github.com/remarkjs/remark">remark</a></p>
+<p>
+  This plugin is built for the current remark-parser and uses
+  <abbr title="Markdown Abstract Syntax Trees">MDAST</abbr> implemented by
+  <a href="https://github.com/remarkjs/remark">remark</a>
+</p>
 ```
 
 ## License
