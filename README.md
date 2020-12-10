@@ -32,7 +32,7 @@ This plugin is built for the current remark-parser and uses MDAST implemented by
 And the script example.js has the following code:
 
 ```javascript
-const remark = require("remark-abbr");
+const remark = require("remark");
 remark()
   .use(require("remark-abbr"))
   .process(src, (err, file) => console.log(String(file)));
