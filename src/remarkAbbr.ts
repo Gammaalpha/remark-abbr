@@ -1,3 +1,5 @@
+import { getPositionOfLineAndCharacter } from "typescript";
+
 let visit = require('unist-util-visit');
 var squeezeParagraphs = require('mdast-squeeze-paragraphs')
 const u = require('unist-builder');
@@ -60,44 +62,43 @@ export const RemarkAbbr = () => {
             const pattern = keepNodes.map(item => item.text).join("|");
             const inlineRegex = new RegExp(`\\b(${pattern})\\b`, "i")
 
-            // get abbr text values to replace
-            visit(tree, "paragraph", (node: any, index: number, parent: any) => {
-                let { children = [] } = node;
-                if (node.type === 'paragraph') {
-                    let childItemsToSplice: ChildItemProps[] = [];
-                    children.forEach((element: any, childIndex: number) => {
-                        if (element.type === "text") {
-                            const check = inlineRegex.test(element.value);
-                            if (check) {
-                                let newChildren: any[] = [];
-                                newChildren = element.value.split(inlineRegex)
-                                    .filter((x: string) => x !== '')
-                                    .map(((y: string) => {
-                                        let matchedAbbr = keepNodes.filter(abbrItem => abbrItem.text.toLowerCase() === y.toLowerCase());
-                                        return matchedAbbr.length > 0 ? abbrNodeGenerator(updateAbbr(matchedAbbr[0], y)) : textNodeGenerator(y)
-                                    }))
-                                childItemsToSplice.push({ position: childIndex, children: newChildren })
-                            }
+            visit(tree, "text", (node: any, index: number, parent: any) => {
+                console.log(node, index, parent);
+                let childItemsToSplice: ChildItemProps[] = [];
+
+                if (node.type === "text" && node.value !== " ") {
+                    const check = inlineRegex.test(node.value);
+                    if (check) {
+                        let newChildren: any[] = [];
+                        newChildren = node.value.split(inlineRegex)
+                            .filter((x: string) => x !== '')
+                            .map(((y: string) => {
+                                let matchedAbbr = keepNodes.filter(abbrItem => abbrItem.text.toLowerCase() === y.toLowerCase());
+
+                                return matchedAbbr.length > 0 ? abbrNodeGenerator(updateAbbr(matchedAbbr[0], y), node.position) : textNodeGenerator(y);
+                            }));
+
+                        childItemsToSplice.push({ position: index, children: newChildren })
+
+
+                        if (childItemsToSplice.length > 0) {
+                            spliceArray(parent.children, childItemsToSplice)
                         }
-                    });
-                    if (childItemsToSplice.length > 0) {
-                        parent.children[index] = u("paragraph", spliceArray(children, childItemsToSplice))
                     }
                 }
-            });
+
+            })
+
         }
-        // return tree;
 
     }
 }
 
 
 const spliceArray = (mainArray: any[], data: any[]) => {
-    let tempMainArray = [...mainArray]
     data.reverse().forEach((element: ChildItemProps) => {
-        tempMainArray.splice(element.position, 1, ...element.children)
+        mainArray.splice(element.position, 1, ...element.children)
     })
-    return tempMainArray;
 }
 
 const updateAbbr = (abbrData: AbbrProps, newText: string): AbbrProps => {
@@ -107,9 +108,10 @@ const updateAbbr = (abbrData: AbbrProps, newText: string): AbbrProps => {
     }
 }
 
-const abbrNodeGenerator = (abbrData: AbbrProps) => {
+const abbrNodeGenerator = (abbrData: AbbrProps, position: any) => {
     return {
         type: 'content',
+        position: position,
         children: [
             { type: "text", value: abbrData.text },
         ],
