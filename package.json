@@ -9,8 +9,8 @@
     "watch": "tsc --watch",
     "dev": "npx ts-node src/app.ts --watch",
     "nodemon": "nodemon src/app.ts",
-    "test": "jest",
-    "test:watch": "jest --watchAll",
+    "test": "jest --maxWorkers=4 --runInBand",
+    "test:watch": "jest --watchAll --maxWorkers=4",
     "build-wp": "rm -rf build/ && webpack --mode production",
     "deploy": "npm run build-wp && sh deploy.sh"
   },
