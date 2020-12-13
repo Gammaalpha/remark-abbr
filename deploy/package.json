@@ -4,9 +4,9 @@
   "description": "Remark plugin for abbreviation support.",
   "main": "index.js",
   "peerDependencies": {
-    "mdast-squeeze-paragraphs": "^4.0.0",
     "unist-builder": "^2.0.3",
-    "unist-util-visit": "^2.0.3"
+    "unist-util-remove": "^2.0.1",
+    "mdast-util-find-and-replace": "^1.0.0"
   },
   "repository": {
     "type": "git",
