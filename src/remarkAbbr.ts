@@ -1,9 +1,9 @@
 import { getPositionOfLineAndCharacter } from "typescript";
 
 let visit = require('unist-util-visit');
-var squeezeParagraphs = require('mdast-squeeze-paragraphs')
-const u = require('unist-builder');
-
+let squeezeParagraphs = require('mdast-squeeze-paragraphs')
+let u = require('unist-builder');
+let findAndReplace = require('mdast-util-find-and-replace');
 export interface AbbrProps {
     text: string,
     title: string
@@ -49,7 +49,6 @@ export const RemarkAbbr = () => {
                         }
                     }).filter((i: string) => i !== "").join("\n");
                     emptyNode = finalString.trim() !== "" ? false : true;
-                    // console.log(parent[index])
                     node.children[node.children.length - 1] = textNodeGenerator(finalString);
                 }
             });
@@ -63,7 +62,6 @@ export const RemarkAbbr = () => {
             const inlineRegex = new RegExp(`\\b(${pattern})\\b`, "i")
 
             visit(tree, "text", (node: any, index: number, parent: any) => {
-                console.log(node, index, parent);
                 let childItemsToSplice: ChildItemProps[] = [];
 
                 if (node.type === "text" && node.value !== " ") {

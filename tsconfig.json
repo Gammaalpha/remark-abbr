@@ -8,7 +8,7 @@
     "babel.config.js",
     "jest.config.js",
     "jest.config.js"
-  ],
+, "src/tests/plugin.ts", "src/tests/first.spec.ts"  ],
   "exclude": [
     "node_modules",
     "**/*.spec.ts",

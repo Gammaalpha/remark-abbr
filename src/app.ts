@@ -1,3 +1,3 @@
-import Plugin from "./plugin";
+import Plugin from "./tests/plugin";
 
 Plugin();
