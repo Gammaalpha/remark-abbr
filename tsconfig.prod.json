@@ -7,8 +7,7 @@
         "./node_modules",
         "./build",
         "./**/*.spec.ts",
-        "./src/app.ts",
-        "./src/plugin.ts",
+        "./src/tests/*.*",
         "./jest.config.js",
         "./babel.config.js"
     ]

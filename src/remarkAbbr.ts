@@ -1,7 +1,4 @@
-import { getPositionOfLineAndCharacter } from "typescript";
 
-let visit = require('unist-util-visit');
-let squeezeParagraphs = require('mdast-squeeze-paragraphs')
 let u = require('unist-builder');
 let findAndReplace = require('mdast-util-find-and-replace');
 let remove = require('unist-util-remove')
@@ -68,6 +65,3 @@ const abbrNodeGenerator = (abbrData: AbbrProps) => {
     }
 }
 
-const textNodeGenerator = (value: string) => {
-    return u('text', value);
-}
