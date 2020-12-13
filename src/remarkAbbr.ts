@@ -22,15 +22,15 @@ export const RemarkAbbr = () => {
                     text: nodeCheck[1],
                     title: nodeCheck[2]
                 });
-                //clear out the abbr input data
-                return u('emptyAbbr', keepNodes.length);
+                //replace the abbr input data
+                return u('emptyAbbrLeaf', keepNodes.length);
             }
             return val;
         })
 
         if (keepNodes.length > 0) {
             //remove emptyAbbr nodes
-            remove(tree, 'emptyAbbr')
+            remove(tree, 'emptyAbbrLeaf')
             const inlineRegex = (val: string) => new RegExp(`\\b(${val})\\b`, "i")
             keepNodes.forEach(item => {
                 findAndReplace(tree, inlineRegex(item.text), (val: string) => {
