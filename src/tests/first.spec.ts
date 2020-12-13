@@ -18,6 +18,6 @@ describe("not section", () => {
 
 
     it('should have the abbr translated node in table cell tag', () => {
-        expect(result).toMatch(/(\<td align="center"\>Put Pipes In \<abbr title="hypertext"\>html\<\/abbr\>\<\/td\>)/i);
+        expect(result).toMatch(/(\<td align="center"\>Put Pipes In \<abbr title="hypertext"\>HTML\<\/abbr\>\<\/td\>)/);
     })
 });
